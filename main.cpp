@@ -32,19 +32,15 @@ std::vector <unsigned int> getProbabilities(std::vector <char> &input);
 //returns a vector of unsigned ints to represent relitive liklyhood of each variable in the input vector
 //may be based off an external file
 
-
-void printParamaters(std::ofstream &file);
-//prints out the inital paramaters of the program and makes everything look nice
-
-
+//complete
 unsigned long long sum(const std::vector <unsigned int> &input);
 //gets the sum of all the values in the vector
 
-
+//complete
 unsigned long long random(unsigned long long max);
 //gets random interger in the range [0, max]
 
-
+//complete
 float logBase(float base, float x);
 //returns log of any base
 
@@ -72,8 +68,7 @@ int main()
 
 std::vector <signed char> getVars(unsigned int size)
 {
-	std::vector <signed char> output;
-	output.resize(size);
+	std::vector <signed char> output(size);
 
 	//start with 33 (!) and go to 126 (~)
 	if(size > 94 /*number of characters between ~ and ! (inclusive)*/)
@@ -136,4 +131,9 @@ unsigned long long random(unsigned long long max)
 	randomNumber %= max;
 
 	return randomNumber;
+}
+
+float logBase(float base, float x)
+{
+	return log(x)/log(base);
 }
