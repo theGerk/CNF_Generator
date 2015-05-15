@@ -15,15 +15,16 @@ may reference another line by using #line_number
 #5 lines equation for true
 
 Syntax for a variable:
-T(p,q,n,i,S,T): U(S,T), F(p,q,n,i,S,T): U(S,T);
+T(p,q,n,i,S,T): U(S,T)
+F(p,q,n,i,S,T): U(S,T)
 U must be defined if the previous statement is not constant
 T, F, and U must be natural numbers
 T is the chance for true 
 F is the chance for false
 
 Example line:
-10/(p + q - d - b) : S,
-5/(p + q - d - b) : 1;
+10/(p + q - d - b) : S
+5/(p + q - d - b) : 1
 The first part gives the equation for likely-hood to exist.
 The second part gives how often it will be updated
 The third part gives the equation for likely-hood to exist with an inversion.
