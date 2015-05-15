@@ -18,7 +18,6 @@
 
 
 //Declarations:
-
 //complete
 std::vector <char> getVars(unsigned int size);
 //returns a vector of the usable characters for differen variables 
@@ -28,7 +27,7 @@ void generateCaluse(unsigned int size, std::vector <char> &vars, std::ofstream f
 //generates a clause of CNF and outputs it into the file
 
 
-std::vector <unsigned int> getProbabilities(std::vector <char> &input);
+std::vector <unsigned int> getProbabilities();
 //returns a vector of unsigned ints to represent relitive liklyhood of each variable in the input vector
 //may be based off an external file
 
@@ -48,9 +47,13 @@ float logBase(float base, float x);
 //Definitions:
 int main()
 {
+
 	vector <signed char> vars = getVars(NUMBER_OF_VARIABLES);
 
 	std::ofstream output;
+	//get paramaters
+	otuptu.open(NAME + ".pram")
+
 	output.open(NAME + ".cnf", std::fstream::app);
 
 	for(unsigned int n = 0; n < NUMBER_OF_STATEMENTS; n++)
@@ -87,11 +90,11 @@ std::vector <signed char> getVars(unsigned int size)
 	return output;
 }
 
-void generateCaluse(unsigned int size, std::vector <signed char> &vars, std::fstream &file)
+void generateCaluse(unsigned int size, std::vector <signed char> &vars, std::ofstream &file)
 {
 	for(unsigned int i = 0; i < size; i++)
 	{
-		std::vector <unsigned int> probabilities = getProbabilities(vars);
+		std::vector <unsigned int> probabilities = getProbabilities();
 		unsigned int index = 0;
 		for(unsigned long long value = random(sum(probabilities) - 1); true; index++)
 		{
