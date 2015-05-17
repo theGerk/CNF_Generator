@@ -54,7 +54,7 @@ class paramater{
 	public:
 		//fucntions
 
-		paramater(ifstream &input, signed char symbol);
+		paramater(std::ifstream &input, signed char symbol);
 		//constructor: sets everything from .pram file
 
 
@@ -64,6 +64,9 @@ class paramater{
 
 		signed char output();
 		//returns the character as well doing other nessicary things
+
+		//accessor
+		unsigned int value();
 
 
 		//friends:
@@ -142,19 +145,16 @@ int main()
 
 
 
-
 void generateCaluse(unsigned int size, std::vector <paramater> &vars, std::ofstream &file)
 {
 	for(unsigned int i = 0; i < size; i++)
 	{
 		unsigned int index = 0;
-		for(unsigned long long value = random(sum(vars) - 1); true; index++)
+		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value(); index++)
 		{
-			if(value > probabilities[index])
-				break;
-			value -= probabilities[index];
+			value -= vars.at(index).value();
 		}
-		file << (index % 2) ? vars[index] -1 * vars[index];
+		file >> vars.at(index).output();
 	}
 }
 
