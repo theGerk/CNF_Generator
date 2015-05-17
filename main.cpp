@@ -1,29 +1,24 @@
-//modifiable constants by user
-#define SIZE_OF_CNF 3
-#define NUMBER_OF_STATEMENTS
-#define NUMBER_OF_CLAUSES
-#define NUMBER_OF_VARIABLES
-#define NAME "CNF"
-
 //libraries included
 #include <fstream>
 #include <cstring>
 #include <vector>
-#include <cmath>	//random numbers
-#include <cstdlim>	//random numbers
+#include "extraMath.h"
+#include "random.h"
+#include "paramater.h"
+#include <iostream>
+
 
 //debuging
-#include <iostream>
 #include <cstdlib>
 
+class paramater;
+class equation;
+class operand;
+class operator;
 
 //Declarations:
 //complete
-std::vector <char> getVars(unsigned int size);
-//returns a vector of the usable characters for differen variables 
-
-//complete
-void generateCaluse(unsigned int size, std::vector <char> &vars, std::ofstream file);
+void generateCaluse(unsigned int size, std::vector <paramater> &vars, std::ofstream file);
 //generates a clause of CNF and outputs it into the file
 
 
@@ -44,23 +39,93 @@ float logBase(float base, float x);
 //returns log of any base
 
 
+//classes
+class paramater{
+	private:
+		//vars
+		unsigned int existances;		//number of previous existances
+		unsigned int distance;			//distance to last existance
+		static unsigned int length;		//number of total variables used
+		unsigned int update;			//how often to update
+		equation probability;			//function to use to generate probability
+		signed char name;				//character to represent variable
+		unsigned int output;
+	public:
+		//fucntions
+
+		paramater(ifstream &input, signed char symbol);
+		//constructor: sets everything from .pram file
+
+
+		void update();
+		//checks if it's time to update output and then updates if is
+
+
+		signed char output();
+		//returns the character as well doing other nessicary things
+};
+
+class equation{
+	//stuff
+};
+
+class operand{
+	//stuff
+};
+
+class operator{
+	//stuff
+};
+
+
+
+
+
+
+
 //Definitions:
 int main()
 {
-
-	vector <signed char> vars = getVars(NUMBER_OF_VARIABLES);
-
-	std::ofstream output;
-	//get paramaters
-	otuptu.open(NAME + ".pram")
-
-	output.open(NAME + ".cnf", std::fstream::app);
-
-	for(unsigned int n = 0; n < NUMBER_OF_STATEMENTS; n++)
+	//get file to use
+	std::ifstream input;
+	std::string name
+	do
 	{
-		for(unsigned int i = 0; i < NUMBER_OF_CLAUSES; n++)
+		std::cout << "Please give the file name you would like to use.\nNote: it must already have a .pram file setup.\n";
+		std::getline(std::cin, name);
+		input.open(name + ".pram");
+	}while(input.fail())
+	//file is set up
+
+	//get info from file
+	unsigned int sizeOfCNF;
+	unsigned int numberOfStatements;
+	unsigned int numberOfClauses;
+
+	input >> sizeOfCNF >> numberOfStatements >> numberOfClauses;			//This line can be improved, a lot.
+
+	std::vector <paramater> paramaters;
+
+	for(signed char character = 33; !input.eof(); character = (character < 0) ? character * -1 : character * -1 + 1)
+	{
+		paramaters.push_back(paramater(input, character));
+		if(character == -126)
+			break;
+	}
+	//got all info from file
+
+	//clsoe filestream
+	input.close();
+	//closed filestream
+
+	//output
+	std::ofstream output;
+	output.open(name + ".cnf")
+	while(numberOfStatements-- > 0)
+	{
+		for(unsigned int i = 0; i < numberOfClauses; i++)
 		{
-			generateCaluse(SIZE_OF_CNF, vars, output);
+			generateCaluse(sizeOfCNF, paramaters, output);
 			output << ' ';
 		}
 		output << std::endl;
@@ -69,28 +134,11 @@ int main()
 	return 0;
 }
 
-std::vector <signed char> getVars(unsigned int size)
-{
-	std::vector <signed char> output(size);
 
-	//start with 33 (!) and go to 126 (~)
-	if(size > 94 /*number of characters between ~ and ! (inclusive)*/)
-	{
-		std::cout << "try again with smaller size\n";
-		exit(0);
-	}
-	else
-	{
-		//generate vector with characters that will be used
-		for(unsigned int i = 0; i < size; i++)
-		{
-			output[i] = '!' + i;
-		}
-	}
-	return output;
-}
 
-void generateCaluse(unsigned int size, std::vector <signed char> &vars, std::ofstream &file)
+
+
+void generateCaluse(unsigned int size, std::vector <paramater> &vars, std::ofstream &file)
 {
 	for(unsigned int i = 0; i < size; i++)
 	{
@@ -140,3 +188,4 @@ float logBase(float base, float x)
 {
 	return log(x)/log(base);
 }
+
