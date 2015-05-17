@@ -15,8 +15,8 @@ may reference another line by using #line_number
 #5 lines equation for true
 
 Syntax for a variable:
-T(p,q,n,i,S,T): U(S,T)
-F(p,q,n,i,S,T): U(S,T)
+T: U
+F: U
 U must be defined if the previous statement is not constant
 T, F, and U must be natural numbers
 T is the chance for true 
