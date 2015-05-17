@@ -67,10 +67,6 @@ class paramater{
 
 		//accessor
 		unsigned int value();
-
-
-		//friends:
-		friend unsigned long long sum(const std::vector <paramater> &input);
 };
 
 class equation{
@@ -184,7 +180,6 @@ unsigned long long random(unsigned long long max)
 			randomNumber += pow(rand(), i);
 	}while(randomNumber > divisor * max);
 	randomNumber %= max;
-
 	return randomNumber;
 }
 
@@ -197,6 +192,6 @@ unsigned long long sum(const std::vector <parameter> &input)
 {
 	unsigned long long output = 0;
 	for(unsigned int i = 0; i < input.size(); i++)
-		output += input.at(i).output;
+		output += input.at(i).value();
 	return output;
 }
