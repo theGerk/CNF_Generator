@@ -27,7 +27,8 @@ std::vector <unsigned int> getProbabilities();
 //may be based off an external file
 
 //complete
-unsigned long long sum(const std::vector <unsigned int> &input);
+unsigned long long sum(const std::vector <paramater> &input);		//complete
+unsigned long long sum(const std::vector <unsigned int> &input);	//complete
 //gets the sum of all the values in the vector
 
 //complete
@@ -63,6 +64,10 @@ class paramater{
 
 		signed char output();
 		//returns the character as well doing other nessicary things
+
+
+		//friends:
+		friend unsigned long long sum(const std::vector <paramater> &input);
 };
 
 class equation{
@@ -142,9 +147,8 @@ void generateCaluse(unsigned int size, std::vector <paramater> &vars, std::ofstr
 {
 	for(unsigned int i = 0; i < size; i++)
 	{
-		std::vector <unsigned int> probabilities = getProbabilities();
 		unsigned int index = 0;
-		for(unsigned long long value = random(sum(probabilities) - 1); true; index++)
+		for(unsigned long long value = random(sum(vars) - 1); true; index++)
 		{
 			if(value > probabilities[index])
 				break;
@@ -189,3 +193,10 @@ float logBase(float base, float x)
 	return log(x)/log(base);
 }
 
+unsigned long long sum(const std::vector <parameter> &input)
+{
+	unsigned long long output = 0;
+	for(unsigned int i = 0; i < input.size(); i++)
+		output += input.at(i).output;
+	return output;
+}
