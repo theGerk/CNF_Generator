@@ -8,6 +8,7 @@
 
 //Defined constants -- Will be updated continiously
 	//operators in input
+	#define REFERENCE '#'
 		//Unary
 			#define NEGITIVEi '-'
 
@@ -45,7 +46,7 @@
 class parameter;
 class function;
 class operand;
-struct variable;
+class variable;
 
 //complete
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream file);
@@ -84,6 +85,10 @@ class parameter{
 		void mutateLine();
 		//changes setLine to being used for function
 
+		//complete
+		unsigned int* getVariableToUse(char character);
+		//returns the variable that is going to be used based on variable
+
 	public:
 		//vars
 		static unsigned int length;		//number of total variables used
@@ -98,14 +103,14 @@ class parameter{
 		//updates output when it's time
 
 		//complete
-		signed char output();
+		signed char output(std::vector <parameter> &arg);
 		//returns the character as well doing other nessicary things
 
 		//complete
 		unsigned int value() const	{return output;}
 		//returns output member variable
 
-
+		//in progress
 		void setup(const std::vector <parameter> &parameters);
 		//uses setLine to set up var, then changes it so that function can use it and then removes data from setLine as to save sapce
 		//if update is 0 then will just delete setLine's contents
@@ -156,10 +161,18 @@ class operand{
 		//evaluates if it is true or false and returns value
 };
 
-struct variable{
+class variable{
+	public:
+		//vars
 		std::string name;		//the symbolic name of the variable
 		unsigned int* parent;	//the value that sets it
 		// float value;			//the value of the variable
+
+		//functions
+		//complete
+		variable(std::string str, unsigned int &in)	{name = str;	parent = &in;}
+		variable(std::string str, unsigned int* in)	{name = str;	parent = in;}
+		//sets vars
 };
 
 
@@ -223,19 +236,17 @@ int main()
 	return 0;
 }
 
-
-
-
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream &file)
 {
 	for(unsigned int i = size; i; i--)
 	{
+		for(unsigned int n = vars.size(); n; vars.at(--n).update());
 		unsigned int index = 0;
 		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value; index++)
 		{
 			value -= vars.at(index).value();
 		}
-		file >> vars.at(index).output();
+		file >> vars.at(index).output(vars);
 	}
 }
 
@@ -281,8 +292,9 @@ unsigned long long sum(const std::vector <parameter> &input)
 	return output;
 }
 
-signed char parameter::output()
+signed char parameter::output(std::vector <parameter> &arg)
 {
+	for(unsigned int n = arg.size(); n; arg.at(--n).distance++);
 	existances++;
 	distance = 0;
 	length++;
@@ -332,12 +344,16 @@ float operand::getValue() const
 float function::evaluate() const
 {
 	switch(input.size())
+	{
+		//unary operator
 		case: 1
 			switch(operation)
 			{
 				case:NEGITIVEo
 					return input.at(0).getValue();
 			}
+
+		//binary operator
 		case: 2
 			switch(operation)
 			{
@@ -356,4 +372,41 @@ float function::evaluate() const
 				case: ROOTo
 					return pow(input.at(0).getValue(), pow(input.at(1).getValue(), -1));
 			}
+	}
+}
+
+void parameter::setup(const std::vector <parameter> &parameters)
+{
+	//set up vars
+	for(std::size_t location = setLine.find_first_of("pdn"); location != std::string::npos; location = setLine.find_first_of("pdn", location + 1))
+	{
+
+		if(setLine.at(location - 1) == REFERENCE)
+		{
+			unsigned int line;
+			unsigned int n;
+			for(n = 2; isNumber(setLine.at(location - n)); n++)
+			{
+				line += (setLine.at(location - n) - '0') * pow(10, n - 2);
+			}
+			var.push_back(variable(substr(location - n, n), parameters.at(line).(getVariableToUse(setLine.at(location)))));
+		}
+		else
+		{
+			var.push_back(variable(setLine.at(location), getVariableToUse(setLine.at(location))))
+		}
+	}
+}
+
+unsigned int* parameter::getVariableToUse(char character)
+{
+	switch(character)
+	{
+		case: 'p'
+			return &existances;
+		case: 'd'
+			return &distance;
+		case: 'n'
+			return &length;
+	}
 }
