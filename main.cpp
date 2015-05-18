@@ -11,6 +11,9 @@
 	#define REFERENCE '#'
 		//Unary
 			#define NEGITIVEi '-'
+			#define FACTORIALi '!'
+			#define CEILINGi 'C'
+			#define FLOORi 'F'
 
 		//Binary
 			#define ADDi '+'
@@ -27,6 +30,9 @@
 	//operators in memory
 		//Unary
 			#define NEGITIVEo '-'
+			#define FACTORIALo '!'
+			#define CEILINGo 'C'
+			#define FLOORo 'F'
 
 		//Binary
 			#define ADDo '+'
@@ -37,7 +43,7 @@
 			#define LOGo '~'
 			#define ROOTo '`'
 
-		//Other functions without operators
+		//Other functions without operators (sine, cosine, tangent, sumation)
 
 
 
@@ -65,20 +71,23 @@ unsigned long long random(unsigned long long max);
 float logBase(float base, float x);
 //returns log of any base
 
+//complete
+float factorial(float x);
+//returns factorial of the rounded value of x
 
 //classes
 class parameter{
 	private:
 		//vars
-		unsigned int existances;		//number of previous existances
-		unsigned int distance;			//distance to last existance
+		unsigned int existances;			//number of previous existances
+		unsigned int distance;				//distance to last existance
 
-		unsigned int update;			//how often to update
-		operand probability;			//function to use to generate probability
-		signed char name;				//character to represent variable
-		unsigned int output;			//the current output from the function
-		std::vector <variable> var;		//the variables used by it
-		std::string setLine;			//the entire line from the .pram file used for this
+		unsigned int update;				//how often to update
+		operand probability;				//function to use to generate probability
+		signed char name;					//character to represent variable
+		unsigned int output;				//the current output from the function
+		std::vector <unsigned int*> var;	//the variables used by it
+		std::string setLine;				//the entire line from the .pram file used for this
 
 		//functions
 
@@ -88,6 +97,12 @@ class parameter{
 		//complete
 		unsigned int* getVariableToUse(char character);
 		//returns the variable that is going to be used based on variable
+
+		//complete
+		int findVarLocation(unsigned int* var);
+		//returns the location in the var vector where that exists
+		//if it does not exist it returns the maximum value sotrable in an unsigned int
+		//this value is obatained by simply taking the bitwise negation of 0
 
 	public:
 		//vars
@@ -110,7 +125,7 @@ class parameter{
 		unsigned int value() const	{return output;}
 		//returns output member variable
 
-		//in progress
+		//complete
 		void setup(const std::vector <parameter> &parameters);
 		//uses setLine to set up var, then changes it so that function can use it and then removes data from setLine as to save sapce
 		//if update is 0 then will just delete setLine's contents
@@ -159,20 +174,6 @@ class operand{
 		//complete
 		float getValue() const;
 		//evaluates if it is true or false and returns value
-};
-
-class variable{
-	public:
-		//vars
-		std::string name;		//the symbolic name of the variable
-		unsigned int* parent;	//the value that sets it
-		// float value;			//the value of the variable
-
-		//functions
-		//complete
-		variable(std::string str, unsigned int &in)	{name = str;	parent = &in;}
-		variable(std::string str, unsigned int* in)	{name = str;	parent = in;}
-		//sets vars
 };
 
 
@@ -234,6 +235,7 @@ int main()
 	}
 	output.close();
 	return 0;
+	//done
 }
 
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream &file)
@@ -242,7 +244,7 @@ void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstr
 	{
 		for(unsigned int n = vars.size(); n; vars.at(--n).update());
 		unsigned int index = 0;
-		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value; index++)
+		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value(); index++)
 		{
 			value -= vars.at(index).value();
 		}
@@ -253,8 +255,7 @@ void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstr
 unsigned long long sum(const std::vector <unsigned int> &input)
 {
 	unsigned long long output = 0;
-	for(unsigned int i = 0; i < input.size(); i++)
-		output += input[i];
+	for(unsigned int i = input.size(); i; output += input.at(--i));
 	return output;
 }
 
@@ -272,8 +273,7 @@ unsigned long long random(unsigned long long max)
 	//the output
 	unsigned long long randomNumber = 0;
 	do{
-		for(unsigned int i = power; !i; i--)
-			randomNumber += pow(rand(), i);
+		for(unsigned int i = power; i; randomNumber += pow(rand(), i--));
 	}while(randomNumber > divisor * max);
 	randomNumber %= max;
 	return randomNumber;
@@ -287,8 +287,7 @@ float logBase(float base, float x)
 unsigned long long sum(const std::vector <parameter> &input)
 {
 	unsigned long long output = 0;
-	for(unsigned int i = 0; i < input.size(); i++)
-		output += input.at(i).value();
+	for(unsigned int i = input.size(); i; output += input.at(--i).value());
 	return output;
 }
 
@@ -312,18 +311,17 @@ void parameter::update()
 
 parameter::parameter(std::ifstream &input, signed char symbol)
 {
-	reset();
+	existances = 0;
+	distance = 0;
 	getline(input, setLine);
 	name = symbol;
 }
 
 void parameter::reset()
 {
-	existances = 0;
-	distance = 0;
-
 	// for(unsigned int i = var.size(); i; var.at(--i).value = 0);
-	for(unsigned int i = var.size(); i; &(var.at(--i).parent) = 0);
+	// for(unsigned int i = var.size(); i; *(var.at(--i).parent) = 0);
+	for(unsigned int i = var.size(); i; *var.at(--i) = 0);
 
 	output = probability.getValue();
 }
@@ -343,17 +341,25 @@ float operand::getValue() const
 
 float function::evaluate() const
 {
+	//stuff for variable size functions goes here
+
 	switch(input.size())
 	{
-		//unary operator
+		//unary
 		case: 1
 			switch(operation)
 			{
 				case:NEGITIVEo
 					return input.at(0).getValue();
+				case:FACTORIALo
+					return factorial(input.at(0).getValue());
+				case:CEILINGo
+					return ceil(input.at(0).getValue());
+				case:FLOORo
+					return floor(input.at(0).getValue())
 			}
 
-		//binary operator
+		//binary
 		case: 2
 			switch(operation)
 			{
@@ -389,11 +395,17 @@ void parameter::setup(const std::vector <parameter> &parameters)
 			{
 				line += (setLine.at(location - n) - '0') * pow(10, n - 2);
 			}
-			var.push_back(variable(substr(location - n, n), parameters.at(line).(getVariableToUse(setLine.at(location)))));
+
+			if(findVarLocation(parameters.at(line).getVariableToUse(setLine.at(location))) == -1)
+				var.push_back(parameters.at(line).getVariableToUse(setLine.at(location)));
+			// var.push_back(variable(substr(location - n, n), parameters.at(line).(getVariableToUse(setLine.at(location)))));
 		}
+
 		else
 		{
-			var.push_back(variable(setLine.at(location), getVariableToUse(setLine.at(location))))
+			if(findVarLocation(getVariableToUse(setLine.at(location))) == -1)
+				var.push_back(getVariableToUse(setLine.at(location)));
+			// var.push_back(variable(setLine.at(location), getVariableToUse(setLine.at(location))))
 		}
 	}
 }
@@ -409,4 +421,12 @@ unsigned int* parameter::getVariableToUse(char character)
 		case: 'n'
 			return &length;
 	}
+}
+
+int paramater::findVarLocation(unsigned int* var)
+{
+	for(unsigned int i = 0 ; i < var.size(); i++)
+		if(var.at(i) = var)
+			return i;
+	return -1;
 }
