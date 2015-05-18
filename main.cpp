@@ -127,7 +127,7 @@ class parameter{
 		unsigned int value() const	{return output;}
 		//returns output member variable
 
-		//complete
+		//in progress
 		void setup(const std::vector <parameter> &parameters);
 		//uses setLine to set up var, then changes it so that function can use it and then removes data from setLine as to save sapce
 		//if update is 0 then will just delete setLine's contents
@@ -153,6 +153,10 @@ class function{
 
 		void setup(const std::string &input, const std::vector <variable> &vars);
 		//sets up function
+
+		//complete
+		function(const std::string &input, const std::vector <variable> &vars)	{setup(input, vars);}
+		//calls setup
 };
 
 class operand{
@@ -387,6 +391,7 @@ float function::evaluate() const
 
 void parameter::setup(const std::vector <parameter> &parameters)
 {
+	mutateLine();
 	//set up vars
 	for(std::size_t location = setLine.find_first_of("pdn"); location != std::string::npos; location = setLine.find_first_of("pdn", location + 1))
 	{
@@ -412,6 +417,11 @@ void parameter::setup(const std::vector <parameter> &parameters)
 			// var.push_back(variable(setLine.at(location), getVariableToUse(setLine.at(location))))
 		}
 	}
+	//vars set up
+
+
+
+
 }
 
 unsigned int* parameter::getVariableToUse(char character)
@@ -442,4 +452,9 @@ float factorial(float x)
 	unsigned int output = 1;
 	for(unsigned int i = round(x); i; output *= (i--));
 	return output;
+}
+
+void parameter::mutateLine()
+{
+
 }
