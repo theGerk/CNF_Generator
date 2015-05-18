@@ -127,7 +127,7 @@ class parameter{
 		unsigned int value() const	{return output;}
 		//returns output member variable
 
-		//in progress
+		//complete
 		void setup(const std::vector <parameter> &parameters);
 		//uses setLine to set up var, then changes it so that function can use it and then removes data from setLine as to save sapce
 		//if update is 0 then will just delete setLine's contents
@@ -174,12 +174,16 @@ class operand{
 	public:
 		//public member functions
 		
-		void setup(std::string input, const std::vector <variable>& vars);
+		void setup(std::string input, const std::vector <variable> &vars);
 		//sets up operand
 
 		//complete
 		float getValue() const;
 		//evaluates if it is true or false and returns value
+
+		//complete
+		operand(const std::string &input, const std::vector <variable> &vars)	{setup(input, vars);}
+		//calls setup
 };
 
 
@@ -219,7 +223,7 @@ int main()
 	//got all info from file
 
 	//set up second part of parameters
-	for(unsigned int i = parameters.size(); i; parameters.at(--i).setup(parameters));	//beatifully consice but hard to read line of code is beatifully consice and hard to read :P 	Suck on my poor style Max!
+	for(unsigned int i = parameters.size(); i; parameters.at(--i).setup(parameters));	//beatifully consice but hard to read line of code is beautifuly consice and hard to read :P 	Suck on my poor style Max!
 	//parameters have been completely set up
 
 	//clsoe filestream
@@ -392,6 +396,16 @@ float function::evaluate() const
 void parameter::setup(const std::vector <parameter> &parameters)
 {
 	mutateLine();
+	unsigned int colon = setLine.find_last_of(":");
+
+	//set up update
+	std::vector <unsigned int*> fixThisLater;
+	operand findUpdate(setLine.substr(colon + 1), fixThisLater);
+	findUpdate.getValue();
+	//update set up
+
+	setLine.resize(colon);
+
 	//set up vars
 	for(std::size_t location = setLine.find_first_of("pdn"); location != std::string::npos; location = setLine.find_first_of("pdn", location + 1))
 	{
@@ -419,9 +433,10 @@ void parameter::setup(const std::vector <parameter> &parameters)
 	}
 	//vars set up
 
+	probability.setup(setLine, var);
+	output = probability.getValue();
 
-
-
+	setLine.resize(0);
 }
 
 unsigned int* parameter::getVariableToUse(char character)
