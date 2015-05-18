@@ -78,9 +78,10 @@ class parameter{
 		//if update is 0 then will just delete setLine's contents
 		//also initializes output regardless
 
-
+		//complete
 		void reset();
 		//used between statments to reset everything neisccary
+		//does not reset length
 };
 
 class function{
@@ -124,9 +125,9 @@ class operand{
 };
 
 struct variable{
-		std::string name;		//the symbolic name of the variable
-		unsigned int* parent;	//the value that sets it
-		float value;			//the value of the variable
+	std::string name;		//the symbolic name of the variable
+	unsigned int* parent;	//the value that sets it
+	float value;			//the value of the variable
 };
 
 
@@ -179,7 +180,7 @@ int main()
 	while(numberOfStatements-- > 0)
 	{
 		parameters.at(0).length == 0;
-		for(unsigned int i = 0; i < numberOfClauses; i++)
+		for(unsigned int i = numberOfClauses; i; i--)
 		{
 			generateCaluse(sizeOfCNF, parameters, output);
 			output << ' ';
@@ -195,7 +196,7 @@ int main()
 
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream &file)
 {
-	for(unsigned int i = 0; i < size; i++)
+	for(unsigned int i = size; i; i--)
 	{
 		unsigned int index = 0;
 		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value(); index++)
@@ -260,7 +261,7 @@ void parameter::update()
 {
 	if(update && !(length % update))
 	{
-		//code stuff
+		for(unsigned int i = var.size(); i; var.at(--i).value = *(var.at(i).parent));
 		output = probability.getValue();
 	}
 }
@@ -272,3 +273,10 @@ parameter::parameter(std::ifstream &input, signed char symbol)
 	name = symbol;
 }
 
+void parameter::reset()
+{
+	existances = 0;
+	distance = 0;
+
+	for(unsigned int i = var.size(); i; var.at(--i).value = 0);
+}
