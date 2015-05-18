@@ -11,17 +11,12 @@
 class parameter;
 class equation;
 class operand;
-class operator;
+class variable;
 
 //Declarations:
 //complete
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream file);
 //generates a clause of CNF and outputs it into the file
-
-
-std::vector <unsigned int> getProbabilities();
-//returns a vector of unsigned ints to represent relitive liklyhood of each variable in the input vector
-//may be based off an external file
 
 //complete
 unsigned long long sum(const std::vector <parameter> &input);		//complete
@@ -44,17 +39,21 @@ class parameter{
 		unsigned int existances;		//number of previous existances
 		unsigned int distance;			//distance to last existance
 		static unsigned int length;		//number of total variables used
+
 		unsigned int update;			//how often to update
-		equation probability;			//function to use to generate probability
+		operand probability;			//function to use to generate probability
 		signed char name;				//character to represent variable
 		unsigned int output;			//the current output from the function
+		std::vector <variable> var;		//the variables used by it
+		std::string setLine;			//the entire line from the .pram file used for this
+
 	public:
 		//fucntions
 
 		parameter(std::ifstream &input, signed char symbol);
 		//constructor: sets everything from .pram file
 
-
+		//in progress
 		void update();
 		//updates output when it's time
 
@@ -63,22 +62,63 @@ class parameter{
 		//returns the character as well doing other nessicary things
 
 		//complete
-		unsigned int value()	{return output;}
+		unsigned int value() const	{return output;}
 		//returns output member variable
+
+
+		void setup(const std::vector <parameter> &parameters);
+		//uses setLine to set up var, then changes it so that equation can use it and then removes data from setLine as to save sapce
+
+		//complete
+		void mutateLine();
+		//changes setLine to being used for equation
 };
 
 class equation{
-	//stuff
+	private:
+		std::vector <operand> input;	//the values that are going to be operated on
+		char operation;					//char representing 
+
+	public:
+		//functions
+
+		float evaluate();
+		//gets output of equation
+
+
+		void setup(const std::string &input, const std::vector <variable> &vars);
+		//sets up equation
 };
 
 class operand{
-	//stuff
+	private:
+		unsigned char varInUse;	//says which member variable is bing used
+		// 0 --> expr
+		// 1 --> var
+		// 2 --> constant
+
+		//ONLY 1 MAY BE USED
+		expression expr;
+		variable *var;
+		bool constant;
+
+	public:
+		//public member functions
+		
+		void setup(std::string input, const std::vector <variable>& vars);
+		//sets up operand
+
+
+		bool getValue() const;
+		//evaluates if it is true or false and returns value
+
 };
 
-class operator{
-	//stuff
+struct variable{
+		std::string name;		//the symbolic name of the variable
+		unsigned int* parent;	//the value that sets it
+		float value;			//the value of the variable
 };
-
 
 
 
@@ -115,6 +155,10 @@ int main()
 			break;
 	}
 	//got all info from file
+
+	//set up second part of parameters
+	for(unsigned int i = parameters.size(); i; parameters.at(--i).setup(parameters));	//beatifully consice but hard to read line of code is beatifully consice and hard to read :P 	Suck on my poor style Max!
+	//parameters have been completely set up
 
 	//clsoe filestream
 	input.close();
@@ -174,7 +218,7 @@ unsigned long long random(unsigned long long max)
 	//the output
 	unsigned long long randomNumber = 0;
 	do{
-		for(unsigned int i = power; i > 0; i--)
+		for(unsigned int i = power; !i; i--)
 			randomNumber += pow(rand(), i);
 	}while(randomNumber > divisor * max);
 	randomNumber %= max;
@@ -200,4 +244,13 @@ signed char parameter::output()
 	distance = 0;
 	length++;
 	return output;
+}
+
+void parameter::update()
+{
+	if(update && !(length % update))
+	{
+		//code stuff
+		output = probability.evaluate();
+	}
 }
