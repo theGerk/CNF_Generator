@@ -14,6 +14,7 @@
 			#define FACTORIALi '!'
 			#define CEILINGi 'C'
 			#define FLOORi 'F'
+			#define ROUNDi 'R'
 
 		//Binary
 			#define ADDi '+'
@@ -33,6 +34,7 @@
 			#define FACTORIALo '!'
 			#define CEILINGo 'C'
 			#define FLOORo 'F'
+			#define ROUNDo 'R'
 
 		//Binary
 			#define ADDo '+'
@@ -349,14 +351,16 @@ float function::evaluate() const
 		case: 1
 			switch(operation)
 			{
-				case:NEGITIVEo
+				case: NEGITIVEo
 					return input.at(0).getValue();
-				case:FACTORIALo
+				case: FACTORIALo
 					return factorial(input.at(0).getValue());
-				case:CEILINGo
+				case: CEILINGo
 					return ceil(input.at(0).getValue());
-				case:FLOORo
-					return floor(input.at(0).getValue())
+				case: FLOORo
+					return floor(input.at(0).getValue());
+				case: ROUNDo
+					return round(input.at(0).getValue());
 			}
 
 		//binary
@@ -429,4 +433,13 @@ int paramater::findVarLocation(unsigned int* var)
 		if(var.at(i) = var)
 			return i;
 	return -1;
+}
+
+float factorial(float x)
+{
+	if(x < 0)
+		x *= -1;
+	unsigned int output = 1;
+	for(unsigned int i = round(x); i; output *= (i--));
+	return output;
 }
