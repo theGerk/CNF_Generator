@@ -9,7 +9,7 @@
 #include <cstdlib>
 
 class parameter;
-class equation;
+class function;
 class operand;
 class variable;
 
@@ -38,7 +38,6 @@ class parameter{
 		//vars
 		unsigned int existances;		//number of previous existances
 		unsigned int distance;			//distance to last existance
-		static unsigned int length;		//number of total variables used
 
 		unsigned int update;			//how often to update
 		operand probability;			//function to use to generate probability
@@ -47,13 +46,21 @@ class parameter{
 		std::vector <variable> var;		//the variables used by it
 		std::string setLine;			//the entire line from the .pram file used for this
 
-	public:
-		//fucntions
+		//functions
 
+		void mutateLine();
+		//changes setLine to being used for function
+
+	public:
+		//vars
+		static unsigned int length;		//number of total variables used
+
+		//fucntions
+		//complete
 		parameter(std::ifstream &input, signed char symbol);
 		//constructor: sets everything from .pram file
 
-		//in progress
+		//complete
 		void update();
 		//updates output when it's time
 
@@ -67,14 +74,16 @@ class parameter{
 
 
 		void setup(const std::vector <parameter> &parameters);
-		//uses setLine to set up var, then changes it so that equation can use it and then removes data from setLine as to save sapce
+		//uses setLine to set up var, then changes it so that function can use it and then removes data from setLine as to save sapce
+		//if update is 0 then will just delete setLine's contents
+		//also initializes output regardless
 
-		//complete
-		void mutateLine();
-		//changes setLine to being used for equation
+
+		void reset();
+		//used between statments to reset everything neisccary
 };
 
-class equation{
+class function{
 	private:
 		std::vector <operand> input;	//the values that are going to be operated on
 		char operation;					//char representing 
@@ -83,11 +92,11 @@ class equation{
 		//functions
 
 		float evaluate();
-		//gets output of equation
+		//gets output of function
 
 
 		void setup(const std::string &input, const std::vector <variable> &vars);
-		//sets up equation
+		//sets up function
 };
 
 class operand{
@@ -100,7 +109,7 @@ class operand{
 		//ONLY 1 MAY BE USED
 		expression expr;
 		variable *var;
-		bool constant;
+		float constant;
 
 	public:
 		//public member functions
@@ -109,7 +118,7 @@ class operand{
 		//sets up operand
 
 
-		bool getValue() const;
+		float getValue() const;
 		//evaluates if it is true or false and returns value
 
 };
@@ -169,6 +178,7 @@ int main()
 	output.open(name + ".cnf")
 	while(numberOfStatements-- > 0)
 	{
+		parameters.at(0).length == 0;
 		for(unsigned int i = 0; i < numberOfClauses; i++)
 		{
 			generateCaluse(sizeOfCNF, parameters, output);
@@ -251,6 +261,14 @@ void parameter::update()
 	if(update && !(length % update))
 	{
 		//code stuff
-		output = probability.evaluate();
+		output = probability.getValue();
 	}
 }
+
+parameter::parameter(std::ifstream &input, signed char symbol)
+{
+	reset();
+	getline(input, setLine);
+	name = symbol;
+}
+
