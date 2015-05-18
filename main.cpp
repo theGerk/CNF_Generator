@@ -7,6 +7,14 @@
 
 
 //Defined constants -- Will be updated continiously
+	//variables
+		#define LENGTH 'n'
+		#define EXISTANCES 'p'
+		#define DISTANCE 'd'
+		
+		//string of all of variables
+			#define VARIABLES "npd"
+
 	//operators in input
 	#define REFERENCE '#'
 		//Unary
@@ -92,10 +100,6 @@ class parameter{
 		std::string setLine;				//the entire line from the .pram file used for this
 
 		//functions
-
-		void mutateLine();
-		//changes setLine to being used for function
-
 		//complete
 		unsigned int* getVariableToUse(char character);
 		//returns the variable that is going to be used based on variable
@@ -323,7 +327,14 @@ parameter::parameter(std::ifstream &input, signed char symbol)
 {
 	existances = 0;
 	distance = 0;
-	getline(input, setLine);
+	// getline(input, setLine);
+	while(input.peak() != '\n' || input.peak() != std::endl)
+	{
+		if(input.peak() = ' ')
+			input.get();
+		else
+			setLine += input.get(); 
+	}
 	name = symbol;
 }
 
@@ -395,7 +406,9 @@ float function::evaluate() const
 
 void parameter::setup(const std::vector <parameter> &parameters)
 {
-	mutateLine();
+	//switching from input symbols to stored symbols would be a good thing to do here
+	//will be done in future version of prograam
+
 	unsigned int colon = setLine.find_last_of(":");
 
 	//set up update
@@ -407,7 +420,7 @@ void parameter::setup(const std::vector <parameter> &parameters)
 	setLine.resize(colon);
 
 	//set up vars
-	for(std::size_t location = setLine.find_first_of("pdn"); location != std::string::npos; location = setLine.find_first_of("pdn", location + 1))
+	for(std::size_t location = setLine.find_first_of(VARIABLES); location != std::string::npos; location = setLine.find_first_of(VARIABLES, location + 1))
 	{
 
 		if(setLine.at(location - 1) == REFERENCE)
@@ -443,11 +456,11 @@ unsigned int* parameter::getVariableToUse(char character)
 {
 	switch(character)
 	{
-		case: 'p'
+		case: EXISTANCES
 			return &existances;
-		case: 'd'
+		case: DISTANCE
 			return &distance;
-		case: 'n'
+		case: LENGTH
 			return &length;
 	}
 }
@@ -467,9 +480,4 @@ float factorial(float x)
 	unsigned int output = 1;
 	for(unsigned int i = round(x); i; output *= (i--));
 	return output;
-}
-
-void parameter::mutateLine()
-{
-
 }
