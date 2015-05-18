@@ -8,12 +8,17 @@
 //debuging
 #include <cstdlib>
 
+
+//operators in input
+#define ADD '+'
+
+
+//Declarations:
 class parameter;
 class function;
 class operand;
-class variable;
+struct variable;
 
-//Declarations:
 //complete
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream file);
 //generates a clause of CNF and outputs it into the file
@@ -91,8 +96,8 @@ class function{
 
 	public:
 		//functions
-
-		float evaluate();
+		//in progress
+		float evaluate() const;
 		//gets output of function
 
 
@@ -102,7 +107,7 @@ class function{
 
 class operand{
 	private:
-		unsigned char varInUse;	//says which member variable is bing used
+		unsigned short varInUse;	//says which member variable is bing used
 		// 0 --> expr
 		// 1 --> var
 		// 2 --> constant
@@ -118,16 +123,15 @@ class operand{
 		void setup(std::string input, const std::vector <variable>& vars);
 		//sets up operand
 
-
+		//complete
 		float getValue() const;
 		//evaluates if it is true or false and returns value
-
 };
 
 struct variable{
-	std::string name;		//the symbolic name of the variable
-	unsigned int* parent;	//the value that sets it
-	float value;			//the value of the variable
+		std::string name;		//the symbolic name of the variable
+		unsigned int* parent;	//the value that sets it
+		// float value;			//the value of the variable
 };
 
 
@@ -199,7 +203,7 @@ void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstr
 	for(unsigned int i = size; i; i--)
 	{
 		unsigned int index = 0;
-		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value(); index++)
+		for(unsigned long long value = random(sum(vars) - 1); value > vars.at(index).value; index++)
 		{
 			value -= vars.at(index).value();
 		}
@@ -261,7 +265,7 @@ void parameter::update()
 {
 	if(update && !(length % update))
 	{
-		for(unsigned int i = var.size(); i; var.at(--i).value = *(var.at(i).parent));
+		// for(unsigned int i = var.size(); i; var.at(--i).value = *(var.at(i).parent));
 		output = probability.getValue();
 	}
 }
@@ -278,5 +282,21 @@ void parameter::reset()
 	existances = 0;
 	distance = 0;
 
-	for(unsigned int i = var.size(); i; var.at(--i).value = 0);
+	// for(unsigned int i = var.size(); i; var.at(--i).value = 0);
+	for(unsigned int i = var.size(); i; &(var.at(--i).parent) = 0);
+
+	output = probability.getValue();
+}
+
+float operand::getValue() const
+{
+	switch(varInUse)
+	{
+		case: 0
+			return expr;
+		case: 1
+			return &(var->parent);
+		case: 2
+			return constant;
+	}
 }
