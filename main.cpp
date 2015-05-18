@@ -3,14 +3,42 @@
 #include <cstring>
 #include <vector>
 #include <iostream>
-
-
-//debuging
 #include <cstdlib>
 
 
-//operators in input
-#define ADD '+'
+//Defined constants -- Will be updated continiously
+	//operators in input
+		//Unary
+			#define NEGITIVEi '-'
+
+		//Binary
+			#define ADDi '+'
+			#define SUBTRACTi '-'
+			#define MULTIPLYi '*'
+			#define DIVIDEi '/'
+			#define POWERi '^'
+			#define LOGi '~'
+			#define ROOTi '`'
+
+	//Other functions without operators
+
+
+	//operators in memory
+		//Unary
+			#define NEGITIVEo '-'
+
+		//Binary
+			#define ADDo '+'
+			#define SUBTRACTo '-'
+			#define MULTiPLYo '*'
+			#define DiViDEo '/'
+			#define POWERo '^'
+			#define LOGo '~'
+			#define ROOTo '`'
+
+		//Other functions without operators
+
+
 
 
 //Declarations:
@@ -96,7 +124,7 @@ class function{
 
 	public:
 		//functions
-		//in progress
+		//complete - Will be upadated
 		float evaluate() const;
 		//gets output of function
 
@@ -299,4 +327,33 @@ float operand::getValue() const
 		case: 2
 			return constant;
 	}
+}
+
+float function::evaluate() const
+{
+	switch(input.size())
+		case: 1
+			switch(operation)
+			{
+				case:NEGITIVEo
+					return input.at(0).getValue();
+			}
+		case: 2
+			switch(operation)
+			{
+				case: ADDo
+					return input.at(0).getValue() + input.at(1).getValue();
+				case: SUBTRACTo
+					return input.at(0).getValue() - input.at(1).getValue();
+				case: MULTiPLYo
+					return input.at(0).getValue() * input.at(1).getValue();
+				case: DiViDEo
+					return input.at(0).getValue() / input.at(1).getValue();
+				case: POWERo
+					return pow(input.at(0).getValue(), input.at(1).getValue());
+				case: LOGo
+					return logBase(input.at(0).getValue(), input.at(1).getValue());
+				case: ROOTo
+					return pow(input.at(0).getValue(), pow(input.at(1).getValue(), -1));
+			}
 }
