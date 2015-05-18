@@ -2,23 +2,20 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
-#include "extraMath.h"
-#include "random.h"
-#include "paramater.h"
 #include <iostream>
 
 
 //debuging
 #include <cstdlib>
 
-class paramater;
+class parameter;
 class equation;
 class operand;
 class operator;
 
 //Declarations:
 //complete
-void generateCaluse(unsigned int size, std::vector <paramater> &vars, std::ofstream file);
+void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream file);
 //generates a clause of CNF and outputs it into the file
 
 
@@ -27,7 +24,7 @@ std::vector <unsigned int> getProbabilities();
 //may be based off an external file
 
 //complete
-unsigned long long sum(const std::vector <paramater> &input);		//complete
+unsigned long long sum(const std::vector <parameter> &input);		//complete
 unsigned long long sum(const std::vector <unsigned int> &input);	//complete
 //gets the sum of all the values in the vector
 
@@ -41,7 +38,7 @@ float logBase(float base, float x);
 
 
 //classes
-class paramater{
+class parameter{
 	private:
 		//vars
 		unsigned int existances;		//number of previous existances
@@ -50,23 +47,24 @@ class paramater{
 		unsigned int update;			//how often to update
 		equation probability;			//function to use to generate probability
 		signed char name;				//character to represent variable
-		unsigned int output;
+		unsigned int output;			//the current output from the function
 	public:
 		//fucntions
 
-		paramater(std::ifstream &input, signed char symbol);
+		parameter(std::ifstream &input, signed char symbol);
 		//constructor: sets everything from .pram file
 
 
 		void update();
-		//checks if it's time to update output and then updates if is
+		//updates output when it's time
 
-
+		//complete
 		signed char output();
 		//returns the character as well doing other nessicary things
 
-		//accessor
-		unsigned int value();
+		//complete
+		unsigned int value()	{return output;}
+		//returns output member variable
 };
 
 class equation{
@@ -108,11 +106,11 @@ int main()
 
 	input >> sizeOfCNF >> numberOfStatements >> numberOfClauses;			//This line can be improved, a lot.
 
-	std::vector <paramater> paramaters;
+	std::vector <parameter> parameters;
 
 	for(signed char character = 33; !input.eof(); character = (character < 0) ? character * -1 : character * -1 + 1)
 	{
-		paramaters.push_back(paramater(input, character));
+		parameters.push_back(parameter(input, character));
 		if(character == -126)
 			break;
 	}
@@ -129,7 +127,7 @@ int main()
 	{
 		for(unsigned int i = 0; i < numberOfClauses; i++)
 		{
-			generateCaluse(sizeOfCNF, paramaters, output);
+			generateCaluse(sizeOfCNF, parameters, output);
 			output << ' ';
 		}
 		output << std::endl;
@@ -141,7 +139,7 @@ int main()
 
 
 
-void generateCaluse(unsigned int size, std::vector <paramater> &vars, std::ofstream &file)
+void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream &file)
 {
 	for(unsigned int i = 0; i < size; i++)
 	{
@@ -193,5 +191,13 @@ unsigned long long sum(const std::vector <parameter> &input)
 	unsigned long long output = 0;
 	for(unsigned int i = 0; i < input.size(); i++)
 		output += input.at(i).value();
+	return output;
+}
+
+signed char parameter::output()
+{
+	existances++;
+	distance = 0;
+	length++;
 	return output;
 }
