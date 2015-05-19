@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
+#include <cmath>
 #include <iostream>
 #include <cstdlib>
 
@@ -16,50 +17,79 @@
 			#define VARIABLES "npd"
 
 	//operators in input
-	#define REFERENCEi '#'
+	#define REFERENCEi '#'	//not an operator as it is now
 		//Unary
-			#define NEGITIVEi '-'
-			#define FACTORIALi '!'
-			#define CEILINGi 'C'
-			#define FLOORi 'F'
-			#define ROUNDi 'R'
+			#define NEGITIVEi '-'	//2
+			#define FACTORIALi '!'	//3
+			#define CEILINGi 'C'	//6
+			#define FLOORi 'F'		//6
+			#define ROUNDi 'R'		//6
 
 		//Binary
 			#define ADDi '+'
-			#define SUBTRACTi '-'
-			#define MULTIPLYi '*'
-			#define DIVIDEi '/'
-			#define POWERi '^'
-			#define LOGi '~'
-			#define ROOTi '`'
-			#define DECIMALi '.'
+			#define SUBTRACTi '-'	//5
+			#define MULTIPLYi '*'	//5
+			#define DIVIDEi '/'		//5
+			#define POWERi '^'		//4
+			#define LOGi '~'		//4
+			#define ROOTi '`'		//4
+			#define DECIMALi '.'	//1
 
 	//Other functions without operators
 
 
 	//operators in memory
-	#define REFERENCEo
+	#define REFERENCEo '#'	//not an operator as it is now
 		//Unary
-			#define NEGITIVEo '-'
-			#define FACTORIALo '!'
-			#define CEILINGo 'C'
-			#define FLOORo 'F'
-			#define ROUNDo 'R'
+			#define NEGITIVEo '-'	//6
+			#define FACTORIALo '!'	//5
+			#define CEILINGo 'C'	//2
+			#define FLOORo 'F'		//2
+			#define ROUNDo 'R'		//2
 
 		//Binary
-			#define ADDo '+'
-			#define SUBTRACTo '-'
-			#define MULTiPLYo '*'
-			#define DiViDEo '/'
-			#define POWERo '^'
-			#define LOGo '~'
-			#define ROOTo '`'
-			#define DECIMALo '.'
+			#define ADDo '+'		//1
+			#define SUBTRACTo '-'	//1
+			#define MULTIPLYo '*'	//3
+			#define DIVIDEo '/'		//3
+			#define POWERo '^'		//4
+			#define LOGo '~'		//4
+			#define ROOTo '`'		//4
+			#define DECIMALo '.'	//7
 
 		//Other functions without operators (sine, cosine, tangent, sumation)
 
 
+//Benji is doing some thinking here
+//some example equations being broken up
+// a + Cb
+// a + (Cb)
+//+(a, Cb)
+//+(a, C(b))
 
+// a * Cb.7
+// a * (Cb.7)
+//*(a, Cb.7)
+//*(a, C(b.7))
+//*(a, C(.(b,7)))
+
+// a.Cb * 7
+// a.(Cb) * 7
+// *(a.(Cb), 7)
+// *(.(a, Cb), 7)
+// *(.(a, C(b)), 7)
+
+//so if there is an operator before the unary operator put parentheses around it?
+// R!b * -4.Ca/Fi
+// R(!b) * (-4.(Ca)/(Fi))
+//R(!b * (-4.(Ca)/(Fi)))
+//R(*(!b, -4.(Ca)/(Fi))))
+//R(*(!(b), -(4.(Ca)/(Fi))))
+//R(*(!(b), -(.(4, Ca/(Fi)))))
+//R(*(!(b), -(.(4, /(Ca, Fi)))))
+//R(*(!(b), -(.(4, /(C(a), F(i))))))
+
+//It seems to work wonders like this
 
 //Declarations:
 class parameter;
@@ -94,6 +124,14 @@ bool isNumber(const char &input);
 //complete
 void clean(std::string &input);
 //takes off paranetheses at ends of string if the parentheses needlessly surround it
+
+//complete
+unsigned int operatorSize(unsigned int i, const std::string &input);
+//returns the number of inputs an operation needs
+
+//complete
+unsigned int inverseOrderOfOperation(const char& Operator);
+//returns the value of the inverted order of operations
 
 //classes
 class parameter{
@@ -400,11 +438,11 @@ float function::evaluate() const
 					return input.at(0).getValue() + input.at(1).getValue();
 				case: SUBTRACTo
 					return input.at(0).getValue() - input.at(1).getValue();
-				case: MULTiPLYo
+				case: MULTIPLYo
 				case: '('
 				case: ')'
 					return input.at(0).getValue() * input.at(1).getValue();
-				case: DiViDEo
+				case: DIVIDEo
 					return input.at(0).getValue() / input.at(1).getValue();
 				case: POWERo
 					return pow(input.at(0).getValue(), input.at(1).getValue());
@@ -594,5 +632,56 @@ void clean(std::string &input)
 			input = input.substr(1, input.size() - 2);
 		else
 			break;
+	}
+}
+
+void function::setup(const std::string &input, const std::vector <unsigned int*> var)
+{
+	last = 
+	for(unsigned int i = input.size(); i--; )
+}
+
+
+//this is with huge bugs
+unsigned int operatorSize(unsigned int i, const std::string &input)
+{
+	if(i)
+	{
+		//this means it is a binary operator
+		return 2;
+	}
+	else
+	{
+
+	}
+}
+
+unsigned int inverseOrderOfOperation(const char& Operator)
+{
+	switch(Operator)
+	{
+		case: ADDo
+		case: SUBTRACTo
+			return 1;
+
+		case: CEILINGo
+		case: FLOORo
+		case: ROUNDo
+			return 2;
+
+		case: MULTIPLYo
+		case: DIVIDEo
+			return 3;
+
+		case: POWERo
+		case: LOGo
+		case: ROOTo
+			return 4;
+
+		case: FACTORIALo
+			return 5;
+
+		case: NEGITIVEo
+			return 6
 	}
 }
