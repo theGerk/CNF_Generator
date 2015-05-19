@@ -181,7 +181,7 @@ class operand{
 
 	public:
 		//public member functions
-		
+		//in progress
 		void setup(std::string input, const std::vector <variable> &vars);
 		//sets up operand
 
@@ -445,6 +445,7 @@ void parameter::setup(const std::vector <parameter> &parameters)
 			//add to newString
 			newString += setLine.substr(loc, location - loc - n + 1);
 			loc = location + 1;
+			newString += REFERENCE;
 			newString += std::to_string(temp);
 			//added to newString
 		}
@@ -459,6 +460,7 @@ void parameter::setup(const std::vector <parameter> &parameters)
 			//add to newString
 			newString += setLine.substr(loc, location - loc);
 			loc = location + 1;
+			newString += REFERENCE;
 			newString += std::to_string(temp);
 			//added to newString
 		}
@@ -504,7 +506,7 @@ float factorial(float x)
 
 void operand::setup(std::string input, const std::vector <variable> &vars)
 {
-
+	
 }
 
 bool isNumber(const char& input)
