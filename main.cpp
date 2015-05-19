@@ -164,7 +164,7 @@ class function{
 		float evaluate() const;
 		//gets output of function
 
-
+		//in progress
 		void setup(const std::string &input, const std::vector <unsigned int*> &vars);
 		//sets up function
 
@@ -187,7 +187,7 @@ class operand{
 
 	public:
 		//public member functions
-		//in progress
+		//complete
 		void setup(std::string input, const std::vector <unsigned int*> &vars);
 		//sets up operand
 
@@ -401,6 +401,8 @@ float function::evaluate() const
 				case: SUBTRACTo
 					return input.at(0).getValue() - input.at(1).getValue();
 				case: MULTiPLYo
+				case: '('
+				case: ')'
 					return input.at(0).getValue() * input.at(1).getValue();
 				case: DiViDEo
 					return input.at(0).getValue() / input.at(1).getValue();
