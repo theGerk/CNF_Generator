@@ -16,7 +16,7 @@
 			#define VARIABLES "npd"
 
 	//operators in input
-	#define REFERENCE '#'
+	#define REFERENCEi '#'
 		//Unary
 			#define NEGITIVEi '-'
 			#define FACTORIALi '!'
@@ -32,11 +32,13 @@
 			#define POWERi '^'
 			#define LOGi '~'
 			#define ROOTi '`'
+			#define DECIMALi '.'
 
 	//Other functions without operators
 
 
 	//operators in memory
+	#define REFERENCEo
 		//Unary
 			#define NEGITIVEo '-'
 			#define FACTORIALo '!'
@@ -52,6 +54,7 @@
 			#define POWERo '^'
 			#define LOGo '~'
 			#define ROOTo '`'
+			#define DECIMALo '.'
 
 		//Other functions without operators (sine, cosine, tangent, sumation)
 
@@ -62,7 +65,6 @@
 class parameter;
 class function;
 class operand;
-class variable;
 
 //complete
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream file);
@@ -88,6 +90,10 @@ float factorial(float x);
 //complete
 bool isNumber(const char &input);
 //checks if input is a number 0 - 9
+
+//complete
+void clean(std::string &input);
+//takes off paranetheses at ends of string if the parentheses needlessly surround it
 
 //classes
 class parameter{
@@ -159,11 +165,11 @@ class function{
 		//gets output of function
 
 
-		void setup(const std::string &input, const std::vector <variable> &vars);
+		void setup(const std::string &input, const std::vector <unsigned int*> &vars);
 		//sets up function
 
 		//complete
-		function(const std::string &input, const std::vector <variable> &vars)	{setup(input, vars);}
+		function(const std::string &input, const std::vector <unsigned int*> &vars)	{setup(input, vars);}
 		//calls setup
 };
 
@@ -175,14 +181,14 @@ class operand{
 		// 2 --> constant
 
 		//ONLY 1 MAY BE USED
-		expression expr;
-		variable *var;
+		function expr;
+		unsigned int *var;
 		float constant;
 
 	public:
 		//public member functions
 		//in progress
-		void setup(std::string input, const std::vector <variable> &vars);
+		void setup(std::string input, const std::vector <unsigned int*> &vars);
 		//sets up operand
 
 		//complete
@@ -190,7 +196,7 @@ class operand{
 		//evaluates if it is true or false and returns value
 
 		//complete
-		operand(const std::string &input, const std::vector <variable> &vars)	{setup(input, vars);}
+		operand(const std::string &input, const std::vector <unsigned int*> &vars)	{setup(input, vars);}
 		//calls setup
 };
 
@@ -358,7 +364,7 @@ float operand::getValue() const
 		case: 0
 			return expr;
 		case: 1
-			return &(var->parent);
+			return &var;
 		case: 2
 			return constant;
 	}
@@ -404,6 +410,8 @@ float function::evaluate() const
 					return logBase(input.at(0).getValue(), input.at(1).getValue());
 				case: ROOTo
 					return pow(input.at(0).getValue(), pow(input.at(1).getValue(), -1));
+				case: DECIMALo
+					return input.at(0).getValue() + input.at(1).getValue() * pow(10, -1 * ceil(logBase(10, input.at(1).getValue())));
 			}
 	}
 }
@@ -428,7 +436,7 @@ void parameter::setup(const std::vector <parameter> &parameters)
 	//set up vars
 	for(std::size_t location = setLine.find_first_of(VARIABLES); location != std::string::npos; location = setLine.find_first_of(VARIABLES, location + 1))
 	{
-		if(setLine.at(location - 1) == REFERENCE)
+		if(setLine.at(location - 1) == REFERENCEi)
 		{
 			unsigned int n;
 			unsigned int line = 0;
@@ -445,7 +453,7 @@ void parameter::setup(const std::vector <parameter> &parameters)
 			//add to newString
 			newString += setLine.substr(loc, location - loc - n + 1);
 			loc = location + 1;
-			newString += REFERENCE;
+			newString += REFERENCEo;
 			newString += std::to_string(temp);
 			//added to newString
 		}
@@ -460,7 +468,7 @@ void parameter::setup(const std::vector <parameter> &parameters)
 			//add to newString
 			newString += setLine.substr(loc, location - loc);
 			loc = location + 1;
-			newString += REFERENCE;
+			newString += REFERENCEo;
 			newString += std::to_string(temp);
 			//added to newString
 		}
@@ -504,12 +512,85 @@ float factorial(float x)
 	return output;
 }
 
-void operand::setup(std::string input, const std::vector <variable> &vars)
+void operand::setup(std::string input, const std::vector <unsigned int*> &vars)
 {
-	
+	clean(input);
+
+	if(input.at(0) == REFERENCEo)
+	{
+		unsigned int i;
+		for(i = 1; isNumber(input.at(i)); i++);
+		if(i == input.size())
+		{
+			//this is a variable
+			varInUse = 1;
+			unsigned int temp = 0;
+			unsigned int counter = 0;
+			for(unsigned int i = input.size(); --i; temp += pow(10, counter++) * input.at(i));
+			var = vars.at(temp);
+		}
+		else
+		{
+			//this is an equation
+			varInUse = 0;
+			expr.setup(input, vars);
+		}
+	}
+	else if(isNumber(input.at(0)))
+	{
+		unsigned int i;
+		for(i = 1; isNumber(input.at(i)); i++);
+		if(i == input.size())
+		{
+			//this is a constant
+			varInUse = 2;
+			constant = 0;
+			unsigned int counter = 0;
+			for(unsigned int i = input.size(); i--; constant += pow(10, counter++) * input.at(i));
+		}
+		else
+		{
+			//this is an equation
+			varInUse = 0;
+			expr.setup(input, vars);
+		}
+	}
+	else
+	{
+		//this is an equation
+		varInUse = 0;
+		expr.setup(input, vars);
+	}
 }
 
-bool isNumber(const char& input)
+bool isNumber(const char &input)
 {
 	return (input >= '0' && input <= '9');
+}
+
+void clean(std::string &input)
+{
+	while(input[0] == START_PARA())
+	{
+		bool del = true;
+		int open = 1;
+		for(unsigned int i = 1; i < input.size(); i++)
+		{
+			if(input[i] == START_PARA())
+				open++;
+			else if(input[i] == END_PARA())
+				open--;
+
+			if(open == 0)
+			{
+				del = false;
+				break;
+			}
+		}
+
+		if(del)
+			input = input.substr(1, input.size() - 2);
+		else
+			break;
+	}
 }
