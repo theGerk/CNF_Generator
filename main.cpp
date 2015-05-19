@@ -85,6 +85,10 @@ float logBase(float base, float x);
 float factorial(float x);
 //returns factorial of the rounded value of x
 
+//complete
+bool isNumber(const char &input);
+//checks if input is a number 0 - 9
+
 //classes
 class parameter{
 	private:
@@ -418,35 +422,51 @@ void parameter::setup(const std::vector <parameter> &parameters)
 	//update set up
 
 	setLine.resize(colon);
+	std::string newString;
+	unsigned int loc = 0;
 
 	//set up vars
 	for(std::size_t location = setLine.find_first_of(VARIABLES); location != std::string::npos; location = setLine.find_first_of(VARIABLES, location + 1))
 	{
-
 		if(setLine.at(location - 1) == REFERENCE)
 		{
-			unsigned int line;
 			unsigned int n;
+			unsigned int line = 0;
 			for(n = 2; isNumber(setLine.at(location - n)); n++)
 			{
 				line += (setLine.at(location - n) - '0') * pow(10, n - 2);
-			}
+			}			
 
-			if(findVarLocation(parameters.at(line).getVariableToUse(setLine.at(location))) == -1)
+			int temp = findVarLocation(parameters.at(line).getVariableToUse(setLine.at(location)));
+			if(temp == -1)
 				var.push_back(parameters.at(line).getVariableToUse(setLine.at(location)));
 			// var.push_back(variable(substr(location - n, n), parameters.at(line).(getVariableToUse(setLine.at(location)))));
+
+			//add to newString
+			newString += setLine.substr(loc, location - loc - n + 1);
+			loc = location + 1;
+			newString += std::to_string(temp);
+			//added to newString
 		}
 
 		else
 		{
-			if(findVarLocation(getVariableToUse(setLine.at(location))) == -1)
+			int temp = findVarLocation(getVariableToUse(setLine.at(location)));
+			if(temp == -1)
 				var.push_back(getVariableToUse(setLine.at(location)));
 			// var.push_back(variable(setLine.at(location), getVariableToUse(setLine.at(location))))
+
+			//add to newString
+			newString += setLine.substr(loc, location - loc);
+			loc = location + 1;
+			newString += std::to_string(temp);
+			//added to newString
 		}
+
 	}
 	//vars set up
 
-	probability.setup(setLine, var);
+	probability.setup(newString, var);
 	output = probability.getValue();
 
 	setLine.resize(0);
@@ -480,4 +500,14 @@ float factorial(float x)
 	unsigned int output = 1;
 	for(unsigned int i = round(x); i; output *= (i--));
 	return output;
+}
+
+void operand::setup(std::string input, const std::vector <variable> &vars)
+{
+
+}
+
+bool isNumber(const char& input)
+{
+	return (input >= '0' && input <= '9');
 }
