@@ -9,10 +9,8 @@ n = number of previous variables used
 i = number of inverted variables used
 d = distance to last instance
 b = distance to last inverted instance
-S = size of CNF
-T = total number of clauses
-may reference another line by using #line_number
-#5 lines equation for true
+may reference another line by using var#line_number
+p#4	this references the 4th line's p value
 
 Syntax for a variable:
 T: U
@@ -23,7 +21,7 @@ T is the chance for true
 F is the chance for false
 
 Example line:
-10/(p + q - d - b) : S
+10/(p + q - d - b) : 3
 5/(p + q - d - b) : 1
 The first part gives the equation for likely-hood to exist.
 The second part gives how often it will be updated
