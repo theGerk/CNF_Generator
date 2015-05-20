@@ -17,7 +17,9 @@
 			#define VARIABLES "npd"
 
 	//operators in input
-	#define REFERENCEi '#'	//not an operator as it is now
+		#define REFERENCEi '#'	//not an operator as it is now
+		#define SEPERATORi ','	//not an operator
+		
 		//Unary
 			#define NEGITIVEi '-'	//2
 			#define FACTORIALi '!'	//3
@@ -26,8 +28,8 @@
 			#define ROUNDi 'R'		//6
 
 		//Binary
-			#define ADDi '+'
-			#define SUBTRACTi '-'	//5
+			#define ADDi '+'		//7
+			#define SUBTRACTi '-'	//7
 			#define MULTIPLYi '*'	//5
 			#define DIVIDEi '/'		//5
 			#define POWERi '^'		//4
@@ -39,23 +41,25 @@
 
 
 	//operators in memory
-	#define REFERENCEo '#'	//not an operator as it is now
+		#define REFERENCEo '#'	//not an operator as it is now
+		#define SEPERATORo ','	//not an operator
+		
 		//Unary
-			#define NEGITIVEo '-'	//6
-			#define FACTORIALo '!'	//5
-			#define CEILINGo 'C'	//2
-			#define FLOORo 'F'		//2
-			#define ROUNDo 'R'		//2
+			#define NEGITIVEo '-'	//2
+			#define FACTORIALo '!'	//3
+			#define CEILINGo 'C'	//6
+			#define FLOORo 'F'		//6
+			#define ROUNDo 'R'		//6
 
 		//Binary
-			#define ADDo '+'		//1
-			#define SUBTRACTo '-'	//1
-			#define MULTIPLYo '*'	//3
-			#define DIVIDEo '/'		//3
+			#define ADDo '+'		//7
+			#define SUBTRACTo '-'	//7
+			#define MULTIPLYo '*'	//5
+			#define DIVIDEo '/'		//5
 			#define POWERo '^'		//4
 			#define LOGo '~'		//4
 			#define ROOTo '`'		//4
-			#define DECIMALo '.'	//7
+			#define DECIMALo '.'	//1
 
 		//Other functions without operators (sine, cosine, tangent, sumation)
 
@@ -130,7 +134,8 @@ unsigned int operatorSize(unsigned int i, const std::string &input);
 //returns the number of inputs an operation needs
 
 //complete
-unsigned int inverseOrderOfOperation(const char& Operator);
+unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size);			//complete
+unsigned int inverseOrderOfOperation(unsigned int location, const std::string &sting);	//complete
 //returns the value of the inverted order of operations
 
 //classes
@@ -275,7 +280,7 @@ int main()
 	//got all info from file
 
 	//set up second part of parameters
-	for(unsigned int i = parameters.size(); i; parameters.at(--i).setup(parameters));	//beatifully consice but hard to read line of code is beautifuly consice and hard to read :P 	Suck on my poor style Max!
+	for(unsigned int i = parameters.size(); i; parameters.at(--i).setup(parameters));	//beatifully consice but hard to read line of code is beautifuly consice and hard to read :P	Suck on my poor style Max!
 	//parameters have been completely set up
 
 	//clsoe filestream
@@ -439,8 +444,6 @@ float function::evaluate() const
 				case: SUBTRACTo
 					return input.at(0).getValue() - input.at(1).getValue();
 				case: MULTIPLYo
-				case: '('
-				case: ')'
 					return input.at(0).getValue() * input.at(1).getValue();
 				case: DIVIDEo
 					return input.at(0).getValue() / input.at(1).getValue();
@@ -552,7 +555,7 @@ float factorial(float x)
 	return output;
 }
 
-void operand::setup(std::string input, const std::vector <unsigned int*> &vars)
+void operand::setup(std::string &input, const std::vector <unsigned int*> &vars)
 {
 	clean(input);
 
@@ -637,12 +640,34 @@ void clean(std::string &input)
 
 void function::setup(const std::string &input, const std::vector <unsigned int*> var)
 {
-	last = 
-	for(unsigned int i = input.size(); i--; )
+	//find operator and size of operation
+	unsigned int last = 0;
+	unsigned int loc;
+	unsigned int size;
+	unsigned int i = input.size();
+	while(i--)
+	{
+		unsigned int tempSize = operatorSize(i, input);
+		if(inverseOrderOfOperation(input.at(i), tempSize) > last)
+		{
+			loc = i;
+			size = tempSize;
+		}
+	}
+	//operator found and size of operation
+
+	.resize(size);
+	std::vector <string> strings(size);
+
+	while(i < input.size())
+	{
+		if(!loc)
+		{
+
+		}
+	}
 }
 
-
-//this is with huge bugs
 unsigned int operatorSize(unsigned int i, const std::string &input)
 {
 	if(i)
@@ -652,36 +677,69 @@ unsigned int operatorSize(unsigned int i, const std::string &input)
 	}
 	else
 	{
+		//check to see if a unary operator witout parentheses after
+		if(input.at(1) != '(')
+			return 1;
 
+		//look for commas inisde only 1 set of parntheses and add 1
+		unsigned int output = 1;
+		i = 2;
+		for(unsigned int open = 1; i < input.size(); i++)
+		{
+			if(input.at(itr) == '(')
+				open++;
+			else if(input.at(itr) != ')')
+				open--;
+			else if(input.at(itr) == SEPERATORo && open == 1)
+				output++;
+		}
+		return output;
 	}
 }
 
-unsigned int inverseOrderOfOperation(const char& Operator)
+unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size)
 {
-	switch(Operator)
+	switch(size)
 	{
-		case: ADDo
-		case: SUBTRACTo
-			return 1;
+		case:1
+			switch(Operator)
+			{
+				case: NEGITIVEo
+					return 2;
+				case: FACTORIALo
+					return 3;
+				case: CEILINGo
+					return 6;
+				case: FLOORo
+					return 6;
+				case: ROUNDo
+					return 6;
+			}
 
-		case: CEILINGo
-		case: FLOORo
-		case: ROUNDo
-			return 2;
-
-		case: MULTIPLYo
-		case: DIVIDEo
-			return 3;
-
-		case: POWERo
-		case: LOGo
-		case: ROOTo
-			return 4;
-
-		case: FACTORIALo
-			return 5;
-
-		case: NEGITIVEo
-			return 6
+		case:2
+			switch(Operator)
+			{
+				case: ADDo
+					return 7;
+				case: SUBTRACTo
+					return 7;
+				case: MULTIPLYo
+					return 5;
+				case: DIVIDEo
+					return 5;
+				case: POWERo
+					return 4;
+				case: LOGo
+					return 4;
+				case: ROOTo
+					return 4;
+				case: DECIMALo
+					return 1;
+			}
 	}
+}
+
+unsigned int inverseOrderOfOperation(unsigned int location, const std::string &sting)
+{
+	return inverseOrderOfOperation(sting.at(location), operatorSize(location, sting));
 }
