@@ -96,6 +96,7 @@
 //It seems to work wonders like this
 
 
+
 //Declarations:
 class parameter;
 class function;
@@ -138,6 +139,11 @@ unsigned int operatorSize(unsigned int i, const std::string &input);
 unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size);			//complete
 unsigned int inverseOrderOfOperation(unsigned int location, const std::string &sting);	//complete
 //returns the value of the inverted order of operations
+
+//complete
+bool isOpeartor_o(char character);
+bool isOpeartor_i(char character);
+//checks if it is a character
 
 //classes
 class parameter{
@@ -749,4 +755,58 @@ unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size)
 unsigned int inverseOrderOfOperation(unsigned int location, const std::string &sting)
 {
 	return inverseOrderOfOperation(sting.at(location), operatorSize(location, sting));
+}
+
+bool isOpeartor_o(char character)
+{
+	switch(character)
+	{
+	//unary
+		case: NEGITIVEo
+		case: FACTORIALo
+		case: CEILINGo
+		case: FLOORo
+		case: ROUNDo
+
+	//Binary
+		case: ADDo
+		case: SUBTRACTo
+		case: MULTIPLYo
+		case: DIVIDEo
+		case: POWERo
+		case: LOGo
+		case: ROOTo
+		case: DECIMALo
+			return true;
+
+		default:
+			return false;
+	}
+}
+
+bool isOpeartor_i(char character)
+{
+	switch(character)
+	{
+	//unary
+		case: NEGITIVEi
+		case: FACTORIALi
+		case: CEILINGi
+		case: FLOORi
+		case: ROUNDi
+
+	//Binary
+		case: ADDi
+		case: SUBTRACTi
+		case: MULTIPLYi
+		case: DIVIDEi
+		case: POWERi
+		case: LOGi
+		case: ROOTi
+		case: DECIMALi
+			return true;
+
+		default:
+			return false;
+	}
 }
