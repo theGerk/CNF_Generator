@@ -66,14 +66,14 @@
 
 //Benji is doing some thinking here
 //some example equations being broken up
-// a + Cb
+// a + Cb 		----		insert parenthse, you can tell where it goes because it surrounds everything to the end in this case
 // a + (Cb)
 //+(a, Cb)
 //+(a, C(b))
 
-// a * Cb.7
-// a * (Cb.7)
-//*(a, Cb.7)
+// a * Cb.7		----		insert parenthse, you can tell where it goes because the one other operator after it has lower value?						<-------				WRONG, see next example
+// a * (Cb.7)	----		alterntive reason is that you can tell where the parntheses end based on what has greater value then the previous operator 	<-------				Seems correct!
+//*(a, Cb.7)	----		What if the parenthse 
 //*(a, C(b.7))
 //*(a, C(.(b,7)))
 
@@ -94,6 +94,7 @@
 //R(*(!(b), -(.(4, /(C(a), F(i))))))
 
 //It seems to work wonders like this
+
 
 //Declarations:
 class parameter;
@@ -198,7 +199,7 @@ class parameter{
 
 class function{
 	private:
-		std::vector <operand> input;	//the values that are going to be operated on
+		std::vector <operand> inputs;	//the values that are going to be operated on
 		char operation;					//char representing 
 
 	public:
@@ -644,19 +645,25 @@ void function::setup(const std::string &input, const std::vector <unsigned int*>
 	unsigned int last = 0;
 	unsigned int loc;
 	unsigned int size;
-	unsigned int i = input.size();
-	while(i--)
-	{
-		unsigned int tempSize = operatorSize(i, input);
-		if(inverseOrderOfOperation(input.at(i), tempSize) > last)
+	unsigned int i;
+
+	//i'm not sure how to get in the parentheses but this seems like a good place
+	do{
+		i = input.size()
+		while(i--)
 		{
-			loc = i;
-			size = tempSize;
+			unsigned int tempSize = operatorSize(i, input);
+			if(inverseOrderOfOperation(input.at(i), tempSize) > last)
+			{
+				loc = i;
+				size = tempSize;
+			}
 		}
-	}
+	}while(false);
+
 	//operator found and size of operation
 
-	.resize(size);
+	inputs.resize(size);
 	std::vector <string> strings(size);
 
 	while(i < input.size())
