@@ -136,14 +136,16 @@ unsigned int operatorSize(unsigned int i, const std::string &input);
 //returns the number of inputs an operation needs
 
 //complete
-unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size);			//complete
-unsigned int inverseOrderOfOperation(unsigned int location, const std::string &sting);	//complete
+unsigned int orderOfOperation(const char& Operator, unsigned int size);			//complete
+unsigned int orderOfOperation(unsigned int location, const std::string &sting);	//complete
 //returns the value of the inverted order of operations
 
 //complete
-bool isOpeartor_o(char character);
-bool isOpeartor_i(char character);
+bool isOpeartor_o(char character);	//complete
+bool isOpeartor_i(char character);	//complete
 //checks if it is a character
+
+
 
 //classes
 class parameter{
@@ -238,7 +240,7 @@ class operand{
 	public:
 		//public member functions
 		//complete
-		void setup(std::string input, const std::vector <unsigned int*> &vars);
+		void setup(std::string &input, const std::vector <unsigned int*> &vars);
 		//sets up operand
 
 		//complete
@@ -645,10 +647,9 @@ void clean(std::string &input)
 	}
 }
 
-void function::setup(const std::string &input, const std::vector <unsigned int*> var)
+void function::setup(const std::string &input, const std::vector <unsigned int*> &vars)
 {
 	//find operator and size of operation
-	unsigned int last = 0;
 	unsigned int loc;
 	unsigned int size;
 	unsigned int i;
@@ -656,10 +657,10 @@ void function::setup(const std::string &input, const std::vector <unsigned int*>
 	//i'm not sure how to get in the parentheses but this seems like a good place
 	do{
 		i = input.size()
-		while(i--)
+		while(--i)
 		{
 			unsigned int tempSize = operatorSize(i, input);
-			if(inverseOrderOfOperation(input.at(i), tempSize) > last)
+			if(orderOfOperation(input.at(i), tempSize) > last)
 			{
 				loc = i;
 				size = tempSize;
@@ -672,11 +673,46 @@ void function::setup(const std::string &input, const std::vector <unsigned int*>
 	inputs.resize(size);
 	std::vector <string> strings(size);
 
-	while(i < input.size())
+	//if it's a binary operator
+	if(loc)
 	{
-		if(!loc)
-		{
+		strings.at(0) = input.substr(0, loc);
+		strings.at(1) = input.substr(loc + 1);
+	}
 
+	else
+	{
+		unsigned int last = 0;
+
+		while(i < size)
+		{
+			unsigned int open = (size == 1) ? 0 : 1;
+
+			for(unsigned int iterator = last; iterator < input.size(); iterator++)
+			{
+				if(input.at(iterator) == '(')
+					open++;
+				else if(input.at(iterator) == ')')
+					open--;
+				else if(open == 0 && input.at(iterator) == SEPERATORo)
+				{
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					//lajs;dfkjs;ldjf;laskjf;lsajdfl;askjfdlasjk;flasjd;flakjds
+					//012345678911234567892123456789312345678941234567895123456
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					//CONTINUE TO CODE HERE
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					//HERE IS WHERE WE CONTINUE FROM!!
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				
+					break;
+				}
+			}
+			strings.at(i) = input.substr(last
 		}
 	}
 }
@@ -710,7 +746,7 @@ unsigned int operatorSize(unsigned int i, const std::string &input)
 	}
 }
 
-unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size)
+unsigned int orderOfOperation(const char& Operator, unsigned int size)
 {
 	switch(size)
 	{
@@ -752,9 +788,9 @@ unsigned int inverseOrderOfOperation(const char& Operator, unsigned int size)
 	}
 }
 
-unsigned int inverseOrderOfOperation(unsigned int location, const std::string &sting)
+unsigned int orderOfOperation(unsigned int location, const std::string &sting)
 {
-	return inverseOrderOfOperation(sting.at(location), operatorSize(location, sting));
+	return orderOfOperation(sting.at(location), operatorSize(location, sting));
 }
 
 bool isOpeartor_o(char character)
