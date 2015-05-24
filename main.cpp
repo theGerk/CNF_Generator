@@ -101,6 +101,7 @@
 class parameter;
 class function;
 class operand;
+class parenthseseInsertNode;
 
 //complete
 void generateCaluse(unsigned int size, std::vector <parameter> &vars, std::ofstream file);
@@ -252,7 +253,12 @@ class operand{
 		//calls setup
 };
 
-
+class parenthseseInsertNode{
+	public:
+		parenthseseInsertNode* out;
+		unsigned int openLevel;
+		unsigned int operationLevel
+	};
 
 
 
@@ -389,13 +395,21 @@ parameter::parameter(std::ifstream &input, signed char symbol)
 {
 	existances = 0;
 	distance = 0;
+	bool lastIsOperator = false;
+	*extraPara = NULL;
 	// getline(input, setLine);
 	while(input.peak() != '\n' || input.peak() != std::endl)
 	{
 		if(input.peak() = ' ')
 			input.get();
 		else
-			setLine += input.get(); 
+		{	
+			if(lastIsOperator)
+			{
+
+			}
+			setLine += input.get();
+		}
 	}
 	name = symbol;
 }
