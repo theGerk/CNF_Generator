@@ -671,22 +671,21 @@ void function::setup(const std::string &input, const std::vector <unsigned int*>
 	//operator found and size of operation
 
 	inputs.resize(size);
-	std::vector <string> strings(size);
 
 	//if it's a binary operator
 	if(loc)
 	{
-		strings.at(0) = input.substr(0, loc);
-		strings.at(1) = input.substr(loc + 1);
+		inputs.at(1).setup(input.substr(0, loc), vars);
+		inputs.at(.setup(input.substr(loc + 1), vars);
 	}
 
 	else
 	{
-		unsigned int last = 0;
+		unsigned int last = (input.at(1) == '(') ? 2 : 1;
 
-		while(i < size)
+		while(i < size - 1)
 		{
-			unsigned int open = (size == 1) ? 0 : 1;
+			unsigned int open = 0;
 
 			for(unsigned int iterator = last; iterator < input.size(); iterator++)
 			{
@@ -696,24 +695,29 @@ void function::setup(const std::string &input, const std::vector <unsigned int*>
 					open--;
 				else if(open == 0 && input.at(iterator) == SEPERATORo)
 				{
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					//lajs;dfkjs;ldjf;laskjf;lsajdfl;askjfdlasjk;flasjd;flakjds
-					//012345678911234567892123456789312345678941234567895123456
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					//CONTINUE TO CODE HERE
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					//HERE IS WHERE WE CONTINUE FROM!!
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				
+					//just some thinking, move along
+
+					//lajs,dfkjs,ldjf,laskjf,lsajdfl,askjfdlasjk,flasjd,flakjds
+					//0000000000111111111122222222223333333333444444444455555555
+					//0123456789012345678901234567890123456789012345678901234567
+					//a   b
+					//	   a    b
+					//			 a   b
+					//				  a     b
+					//						 a      b
+					//								 a          b
+					//											 a     b
+
+					//now code come
+
+					inputs.at(i++).setup(input.substr(last, iterator - last), vars);
+					last = iterator + 1;
 					break;
 				}
 			}
-			strings.at(i) = input.substr(last
 		}
+		inputs.at(i).setup(input.substr(last, (input.at(input.size() - 1) == ')') ? input.size() - last - 1 : std::string:npos), vars);	//looks like google sheets code...
+		//sets the last input using the substr made from the last location to the end, goes one before the end if there is a parentheses there
 	}
 }
 
